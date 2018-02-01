@@ -3,11 +3,17 @@ import numpy as np
 from bs4 import BeautifulSoup
 
 
+def main():
+    pass
+
+
 def feature_engineering(df):
     df['fraud'] = df['acct_type'].str.contains('fraudster')
 
     df = datetime(df, ['approx_payout_date', 'event_created', 'event_end',
                        'event_published', 'event_start'])
+    df = hour(df, ['approx_payout_date_dt', 'event_created_dt', 'event_end_dt',
+                   'event_published_dt', 'event_start_dt'])
     df = identify_empties(df, ['previous_payouts', 'payout_type'])
     df = org_blacklist(df)
 
@@ -23,6 +29,8 @@ def feature_engineering(df):
     df = short_dummify(df, ['email_domain', 'venue_country', 'country',
                             'currency'])
 
+    return df
+
 
 def datetime(df, columns):
     '''
@@ -33,6 +41,18 @@ def datetime(df, columns):
     '''
     for column in columns:
         df[column + '_dt'] = pd.to_datetime(df[column], unit='s')
+    return df
+
+
+def hour(df, columns):
+    '''
+    Takes a DataFrame and a list of columns with datetime and creates new
+    columns with the hour of the datetime
+    INPUT: DataFrame, list of strings
+    OUTPUT: DataFrame
+    '''
+    for column in columns:
+        df[column + '_hour'] = df[column].dt.hour
     return df
 
 
@@ -77,3 +97,7 @@ def short_dummify(df, columns):
                                                         [column].unique())
                                                  else 0)
     return df
+
+
+if __name__ == '__main__':
+    main()

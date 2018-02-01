@@ -29,7 +29,7 @@ def feature_engineering(df):
     df = short_dummify(df, ['email_domain', 'venue_country', 'country',
                             'currency'])
 
-    df['total_price'] = df.totaticket_typesl_price.apply(get_total_price)
+    df['total_price'] = df.ticket_types.apply(get_total_price)
     df['max_price'] = df.ticket_types.apply(get_max_price)
     df['num_tiers'] = df.ticket_types.apply(len)
 

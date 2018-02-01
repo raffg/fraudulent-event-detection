@@ -16,8 +16,11 @@ def prepare_data():
     df = pd.read_json('data/data.json')
     y = df['acct_type'].str.contains('fraudster')
 
-    cols = ['acct_type', 'approx_payout_date', 'body_length', 'channels',
-            'country',
+    cols = ['acct_type',
+             'approx_payout_date',
+             'body_length',
+             'channels',
+             'country',
              'currency',
              'delivery_method',
              'description',

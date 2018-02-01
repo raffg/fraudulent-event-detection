@@ -16,25 +16,25 @@ def prepare_data():
     df = pd.read_json('data/data.json')
     y = df['acct_type'].str.contains('fraudster')
 
-    cols = ['acct_type',
-             'approx_payout_date',
+    cols = [#'acct_type',
+             #'approx_payout_date',
              'body_length',
              'channels',
-             'country',
-             'currency',
-             'delivery_method',
-             'description',
-             'email_domain',
-             'event_created',
-             'event_end',
-             'event_published',
-             'event_start',
+             #'country',
+             #'currency',
+             #'delivery_method', (text)
+             #'description', (text)
+             #'email_domain', (text)
+             #'event_created',
+             #'event_end',
+             #'event_published',
+             #'event_start',
              'fb_published',
              'gts',
              'has_analytics',
-             'has_header',
+             #'has_header', (has NaNs, needs cleaning)
              'has_logo',
-             'listed',
+             'listed', 
              'name',
              'name_length',
              'num_order',

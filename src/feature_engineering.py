@@ -17,7 +17,7 @@ def feature_engineering(df):
     df = identify_empties(df, ['previous_payouts', 'payout_type'])
     df = org_blacklist(df)
 
-    df['listed'] = df.replace({'listed': {'y': 1, 'n': 0}})
+    df['listed'] = df['listed'].apply(lambda x: 1 if x == 'y' else 0)
     df['user_age_90'] = df['user_age'].apply(lambda x: 1 if x >= 90 else 0)
 
     num_links = []

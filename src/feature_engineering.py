@@ -29,6 +29,10 @@ def feature_engineering(df):
     df = short_dummify(df, ['email_domain', 'venue_country', 'country',
                             'currency'])
 
+    df['total_price'] = df.totaticket_typesl_price.apply(get_total_price)
+    df['max_price'] = df.ticket_types.apply(get_max_price)
+    df['num_tiers'] = df.ticket_types.apply(len)
+
     return df
 
 
@@ -52,7 +56,7 @@ def hour(df, columns):
     OUTPUT: DataFrame
     '''
     for column in columns:
-        df[column + '_hour'] = df[column].dt.hour
+        df[column[:-3] + '_hour'] = df[column].dt.hour
     return df
 
 
@@ -97,6 +101,22 @@ def short_dummify(df, columns):
                                                         [column].unique())
                                                  else 0)
     return df
+
+
+def get_total_price(ticket_info):
+    """Returns value of show IF it sells out.
+    """
+    return sum([ticket['cost']*ticket['quantity_total'] for ticket in
+                ticket_info])
+
+
+def get_max_price(ticket_info):
+    """Returns price of most expensive ticket.
+    """
+    prices = [ticket['cost'] for ticket in ticket_info]
+    if prices:
+        return max(prices)
+    return 0
 
 
 if __name__ == '__main__':

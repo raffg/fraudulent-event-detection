@@ -13,6 +13,7 @@ def main():
     X_train, X_test, y_train, y_test, scaler = prepare_data()
     run_model_logistic_regression(X_train, X_test, y_train, y_test)
 
+
 def featurize(df):
     '''
     Takes in raw dataframe and turns it into X data with features
@@ -93,14 +94,15 @@ def featurize(df):
 
     return X, y
 
+
 def prepare_data():
     '''
     Load the data, perform feature engineering, standardize, train/test split
     '''
     df = pd.read_json('data/data.json')
-    df = df.dropna(subset=['event_published'])
 
     X, y = featurize(df)
+    df = df.dropna(subset=['event_published'])
 
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2)
 
@@ -125,7 +127,7 @@ def run_model_logistic_regression(X_train, X_test, y_train, y_test):
 def lr(X_train, X_test, y_train, y_test):
     # Logistic Regression
 
-    model = LogisticRegression(C=0.1)
+    model = LogisticRegression(C=10)
     model.fit(X_train, y_train)
     predicted = model.predict(X_test)
     print('Accuracy: ', accuracy_score(y_test, predicted))

@@ -1,23 +1,28 @@
 import pandas as pd
 import numpy as np
 from src.feature_engineering import feature_engineering
-from sklearn.linear_model import LogisticRegression
+from sklearn.ensemble import GradientBoostingClassifier
 from sklearn.model_selection import GridSearchCV
 from sklearn.preprocessing import StandardScaler
 
 
 def main():
     X_train, y_train, scaler = prepare_data()
-    result = lr_grid_search(np.array(X_train), np.array(y_train).ravel())
+    result = gb_grid_search(np.array(X_train), np.array(y_train).ravel())
     print(result.best_params_, result.best_score_)
 
 
-def lr_grid_search(X, y):
-    parameters = {'penalty': ['l2'],
-                  'C': [1e-2, 1e-1, 1, 10, 100]}
+def gb_grid_search(X, y):
+    parameters = {'loss': ['deviance', 'exponential'],
+                  'learning_rate': [.1, .5, 1, 1.5, 10],
+                  'n_estimators': [10, 50, 100, 150, 200],
+                  'max_depth': [2, 3, 4],
+                  'min_samples_split': [2, 3],
+                  'min_samples_leaf': [1, 2],
+                  'max_features': ['auto', 'sqrt', 'log2']}
 
-    lr = LogisticRegression()
-    clf = GridSearchCV(lr, parameters, scoring='recall', cv=10, verbose=True)
+    gb = GradientBoostingClassifier()
+    clf = GridSearchCV(gb, parameters, scoring='recall', cv=10, verbose=True)
     clf.fit(X, y)
 
     return clf

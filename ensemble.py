@@ -6,6 +6,7 @@ from random_forest import rf
 from gradient_boosting import gb
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.model_selection import GridSearchCV
+from sklearn.model_selection import KFold
 from sklearn.metrics import accuracy_score, precision_score, recall_score, \
                             f1_score
 
@@ -13,17 +14,26 @@ from sklearn.metrics import accuracy_score, precision_score, recall_score, \
 def main():
     X_train, X_test, y_train, y_test, scaler = prepare_data()
     results = run_model_ensemble(X_train, X_test, y_train, y_test)
-    results = pd.DataFrame({'Logistic Regression': results[0],
-                            'Random Forest': results[1],
-                            'Gradient Boosting': results[2]})
+    train = pd.DataFrame({'Logistic Regression': results[0],
+                          'Random Forest': results[1],
+                          'Gradient Boosting': results[2]})
 
-    results['Majority Vote'] = 0
-    results['Majority Vote'] = results.apply(majority, axis=1)
+    train['Majority Vote'] = 0
+    train['Majority Vote'] = train.apply(majority, axis=1)
 
     # result = decision_tree_grid_search(results, y_train)
     # print(result.best_params_, result.best_score_)
 
-    test_results = ensemble_test_results(ensemble, X_test, y_test)
+    ensemble = decision_tree(train, y_train)
+
+    test = pd.DataFrame({'Logistic Regression': results[3].predict(X_test),
+                         'Random Forest': results[4].predict(X_test),
+                         'Gradient Boosting': results[5].predict(X_test)})
+
+    test['Majority Vote'] = 0
+    test['Majority Vote'] = test.apply(majority, axis=1)
+
+    test_results = ensemble_test_results(ensemble, test, y_test)
 
     # ensemble_save_pickle(model)
 
@@ -47,7 +57,7 @@ def run_model_ensemble(X_train, X_test, y_train, y_test):
     results_gb = model_gb.predict(X_train)
     print()
 
-    return results_lr, results_rf, results_gb
+    return results_lr, results_rf, results_gb, model_lr, model_rf, model_gb
 
 
 def majority(row):
@@ -59,6 +69,7 @@ def majority(row):
 
 def decision_tree(X, y):
     # Basic decision tree for ensemble
+    print('Training Decision Tree')
 
     kfold = KFold(n_splits=10)
 
@@ -77,6 +88,8 @@ def decision_tree(X, y):
                                        splitter='random')
         X_train, X_test = X[train_index], X[test_index]
         y_train, y_test = y[train_index], y[test_index]
+        print(X_train)
+        print(y_train)
         model.fit(X_train, y_train)
         y_predict = model.predict(X_test)
         y_true = y_test

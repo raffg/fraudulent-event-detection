@@ -94,10 +94,13 @@ def prepare_data():
     X, y = featurize(df)
     df = df.dropna(subset=['event_published'])
 
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2)
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2,
+                                                        random_state=1)
+
+    cols = list(X_train.columns)
 
     scaler = StandardScaler()
-    X_train = scaler.fit_transform(X_train)
-    X_test = scaler.transform(X_test)
+    X_train = pd.DataFrame(scaler.fit_transform(X_train), columns=cols)
+    X_test = pd.DataFrame(scaler.transform(X_test), columns=cols)
 
     return X_train, X_test, y_train, y_test, scaler

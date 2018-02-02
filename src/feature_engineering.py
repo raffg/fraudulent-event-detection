@@ -54,7 +54,7 @@ def datetime(df, columns):
     '''
     print('Converting datetime')
     for column in columns:
-        print('   convering column ' + column)
+        print('   converting column ' + column)
         df[column + '_dt'] = pd.to_datetime(df[column], unit='s')
     return df
 
@@ -68,7 +68,7 @@ def hour(df, columns):
     '''
     print('Converting hour')
     for column in columns:
-        print('   convering column ' + column)
+        print('   converting column ' + column)
         df[column[:-3] + '_hour'] = df[column].dt.hour
     return df
 
@@ -82,7 +82,7 @@ def identify_empties(df, columns):
     '''
     print('Identifying NaN values')
     for column in columns:
-        print('   convering column ' + column)
+        print('   converting column ' + column)
         df[column + '?'] = df[column].apply(lambda x: 1 if len(x) > 0 else 0)
     return df
 
@@ -113,7 +113,7 @@ def short_dummify(df, columns):
     '''
     print('Dummifying columns')
     for column in columns:
-        print('   convering column ' + column)
+        print('   converting column ' + column)
         cols = list(df[df['fraud']][column].unique())
         df['fraud_' + column] = df[column].apply(lambda x: 1 if x in cols
                                                  else 0)
@@ -129,7 +129,7 @@ def dummify_nan(df, columns):
     '''
     print('Dummifying NaNs')
     for column in columns:
-        print('   convering column ' + column)
+        print('   converting column ' + column)
         df[column + '_dummy'] = df[column].apply(lambda x: 1 if
                                                  np.isnan(x) else 0)
         df = df.drop(column, axis=1)

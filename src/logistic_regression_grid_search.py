@@ -17,7 +17,7 @@ def lr_grid_search(X, y):
                   'C': [1e-2, 1e-1, 1, 10, 100, 1000, 10000]}
 
     lr = LogisticRegression()
-    clf = GridSearchCV(lr, parameters, scoring='f1', cv=10, verbose=True)
+    clf = GridSearchCV(lr, parameters, scoring='recall', cv=10, verbose=True)
     clf.fit(X, y)
 
     return clf

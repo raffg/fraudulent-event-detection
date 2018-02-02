@@ -1,6 +1,7 @@
 import pandas as pd
 import numpy as np
 from bs4 import BeautifulSoup
+import re
 
 
 def main():
@@ -133,6 +134,7 @@ def get_max_price(ticket_info):
         return max(prices)
     return 0
 
+
 def clean_text(html_text):
     '''
     Takes a string of html code and extracts the text and replaces certain
@@ -140,7 +142,7 @@ def clean_text(html_text):
     Input: string
     Output: string
     '''
-    soup = BeautifulSoup(html_text, 'html')
+    soup = BeautifulSoup(html_text, 'lxml')
     c_text = soup.text
     c_text = re.sub('(\xa0)|\n', ' ', c_text)
     c_text = re.sub('\'', '', c_text)

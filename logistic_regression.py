@@ -116,7 +116,7 @@ def run_model_logistic_regression(X_train, X_test, y_train, y_test):
 def lr(X_train, X_test, y_train, y_test):
     # Logistic Regression
 
-    model = LogisticRegression()
+    model = LogisticRegression(C=0.1)
     model.fit(X_train, y_train)
     predicted = model.predict(X_test)
     print('Accuracy: ', accuracy_score(y_test, predicted))

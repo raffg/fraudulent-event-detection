@@ -13,13 +13,10 @@ def main():
     X_train, X_test, y_train, y_test, scaler = prepare_data()
     run_model_logistic_regression(X_train, X_test, y_train, y_test)
 
-
-def prepare_data():
+def featurize(df):
     '''
-    Load the data, perform feature engineering, standardize, train/test split
+    Takes in raw dataframe and turns it into X data with features
     '''
-    df = pd.read_json('data/data.json')
-    df = df.dropna(subset=['event_published'])
     df = feature_engineering(df)
 
     y = df['fraud']
@@ -93,6 +90,18 @@ def prepare_data():
             'num_tiers']
 
     X = df[cols]
+
+    return X, y
+
+def prepare_data():
+    '''
+    Load the data, perform feature engineering, standardize, train/test split
+    '''
+    df = pd.read_json('data/data.json')
+    df = df.dropna(subset=['event_published'])
+
+    X, y = featurize(df)
+
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2)
 
     scaler = StandardScaler()

@@ -1,5 +1,5 @@
 from collections import Counter
-from flask import Flask, request
+from flask import Flask, request, json
 import numpy as np
 from predict import main as predict
 from sklearn.ensemble import GradientBoostingClassifier
@@ -13,15 +13,25 @@ def get_model(path):
         model = pickle.load(f)
     return model
 
-def parse_message(message):
-    """Returns vectorized parameters from message.
-    """
-    return
 
-@app.route('/event_validation')
-def api_fraud():
+# Form page to submit text
+@app.route('/')
+def submission_page():
+    return '''
+        <form action="/score" method='POST' >
+            <input type="json" name="user_input" />
+            <input type="submit" />
+        </form>
+        '''
+
+@app.route('/score', methods = ['POST'])
+def api_score():
+    """Prints the prediction for the provided event information.
+    """
     model = get_model('gb_model.pkl')
-    return
+    data = request.form['user_input']
+    prediction = predict(model, data)
+    return prediction
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=8080, debug=True)

@@ -8,9 +8,10 @@ def main():
     pass
 
 
-def feature_engineering(df):
+def feature_engineering(df, predict=False):
     print('Performing feature engineering')
-    df['fraud'] = df['acct_type'].str.contains('fraudster')
+    if not predict:
+        df['fraud'] = df['acct_type'].str.contains('fraudster')
 
     df = datetime(df, ['approx_payout_date', 'event_created', 'event_end',
                        'event_published', 'event_start'])

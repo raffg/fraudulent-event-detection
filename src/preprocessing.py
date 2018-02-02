@@ -4,14 +4,15 @@ from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 
 
-def featurize(df):
+def featurize(df, predict=False):
     '''
     Takes in raw dataframe and turns it into X data with features
     '''
-    df = feature_engineering(df)
+    df = feature_engineering(df, predict)
 
-    y = df['fraud']
-    X = df.drop('fraud', axis=1)
+    if not predict:
+        y = df['fraud']
+        X = df.drop('fraud', axis=1)
 
     cols = [  # 'acct_type',
             # 'approx_payout_date',
@@ -82,6 +83,8 @@ def featurize(df):
 
     X = df[cols]
 
+    if predict:
+        return X
     return X, y
 
 

@@ -1,17 +1,26 @@
 import pandas as pd
 import numpy as np
-import pickle
-from sklearn.linear_model import LogisticRegression
-from sklearn.metrics import accuracy_score, precision_score, recall_score, \
-                            f1_score
 from src.feature_engineering import feature_engineering
-from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LogisticRegression
+from sklearn.model_selection import GridSearchCV
 from sklearn.preprocessing import StandardScaler
 
 
 def main():
-    X_train, X_test, y_train, y_test, scaler = prepare_data()
-    run_model_logistic_regression(X_train, X_test, y_train, y_test)
+    X_train, y_train, scaler = prepare_data()
+    result = lr_grid_search(np.array(X_train), np.array(y_train).ravel())
+    print(result.best_params_, result.best_score_)
+
+
+def lr_grid_search(X, y):
+    parameters = {'penalty': ['l2'],
+                  'C': [1e-2, 1e-1, 1, 10, 100, 1000, 10000]}
+
+    lr = LogisticRegression()
+    clf = GridSearchCV(lr, parameters, scoring='f1', cv=10, verbose=True)
+    clf.fit(X, y)
+
+    return clf
 
 
 def prepare_data():
@@ -92,49 +101,13 @@ def prepare_data():
             'max_price',
             'num_tiers']
 
-    X = df[cols]
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2)
+    X_train = df[cols]
+    y_train = y
 
     scaler = StandardScaler()
     X_train = scaler.fit_transform(X_train)
-    X_test = scaler.transform(X_test)
 
-    return X_train, X_test, y_train, y_test, scaler
-
-
-def run_model_logistic_regression(X_train, X_test, y_train, y_test):
-    y_train = np.array(y_train).ravel()
-    y_test = np.array(y_test).ravel()
-
-    print('Running Logistic Regression')
-    model = lr(X_train, X_test, y_train, y_test)
-    print()
-
-    # logistic_regression_save_pickle(lr_condensed)
-
-
-def lr(X_train, X_test, y_train, y_test):
-    # Logistic Regression
-
-    model = LogisticRegression()
-    model.fit(X_train, y_train)
-    predicted = model.predict(X_test)
-    print('Accuracy: ', accuracy_score(y_test, predicted))
-    print('Precision: ', precision_score(y_test, predicted))
-    print('Recall: ', recall_score(y_test, predicted))
-    print('F1 score: ', f1_score(y_test, predicted))
-
-    return model
-
-
-def logistic_regression_save_pickle(model):
-    # Save pickle file
-    output = open('pickle/lr_model.pkl', 'wb')
-    print('Pickle dump model')
-    pickle.dump(model, output, protocol=4)
-    output.close()
-
-    return
+    return X_train, y_train, scaler
 
 
 if __name__ == '__main__':

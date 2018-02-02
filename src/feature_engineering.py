@@ -22,13 +22,14 @@ def feature_engineering(df):
 
     num_links = []
     for desc in df.description.values:
-        soup = BeautifulSoup(desc, 'html')
+        soup = BeautifulSoup(desc, 'lxml')
         num_links.append(len(soup.findAll('a')))
     df['num_links'] = num_links
 
     df = short_dummify(df, ['email_domain', 'venue_country', 'country',
                             'currency'])
 
+    df = dummify_nan(df, ['event_published'])
     df['total_price'] = df.ticket_types.apply(get_total_price)
     df['max_price'] = df.ticket_types.apply(get_max_price)
     df['num_tiers'] = df.ticket_types.apply(len)
@@ -96,10 +97,22 @@ def short_dummify(df, columns):
     OUTPUT: DataFrame
     '''
     for column in columns:
-        df['fraud_' + column] = df[column].apply(lambda x: 1 if x in
-                                                 list(df[df['fraud']]
-                                                        [column].unique())
+        cols = list(df[df['fraud']][column].unique())
+        df['fraud_' + column] = df[column].apply(lambda x: 1 if x in cols
                                                  else 0)
+    return df
+
+
+def dummify_nan(df, columns):
+    '''
+    Takes a DataFrame and a list of columns and creates a new column with 1 in
+    rows where the original column was NaN, otherwise 0
+    INPUT: DataFrame, list
+    OUTPUT: DataFrame
+    '''
+    for column in columns:
+        df[column + '_dummy'] = df[column].apply(lambda x: 1 if
+                                                 np.isnan(x) else 0)
     return df
 
 

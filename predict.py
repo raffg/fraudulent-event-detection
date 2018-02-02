@@ -12,8 +12,8 @@ def main(model, data):
     '''
 
 
-    with open(model) as f_mod:
-        model = pickle.load(f_mod)
+    #with open(model) as f_mod:
+        #model = pickle.load(f_mod)
 
     # pass data through same featurizing that training data went through
     df = pd.read_json(data)

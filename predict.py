@@ -1,14 +1,8 @@
 import sys
 from src.feature_engineering import *
+from logistic_regression import featurize
 import pickle
 import json
-
-def feature_pipeline():
-    '''
-    Takes in single data point and creates necessary features and returns
-    array of all features used in the final model
-    '''
-    pass
 
 def main(model_file, input_data_file):
     '''
@@ -22,8 +16,9 @@ def main(model_file, input_data_file):
     with open(input_data_file) as f_data:
         input_data = json.load(f_data)
 
-    data_featurized = feature_pipeline(input_data)
-
+    # pass data through same featurizing that training data went through
+    data_featurized = featurize(pd.read_json(input_data))
+    # makes prediction from model
     prediction = model.predict_proba(data_featurized)
 
     print "Percent chance of fraud: {}".format(prediction * 100)

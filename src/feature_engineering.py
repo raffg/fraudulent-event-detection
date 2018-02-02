@@ -34,6 +34,8 @@ def feature_engineering(df):
     df['max_price'] = df.ticket_types.apply(get_max_price)
     df['num_tiers'] = df.ticket_types.apply(len)
 
+    df['clean_desc'] = df.description.apply(clean_text)
+
     return df
 
 
@@ -130,6 +132,20 @@ def get_max_price(ticket_info):
     if prices:
         return max(prices)
     return 0
+
+def clean_text(html_text):
+    '''
+    Takes a string of html code and extracts the text and replaces certain
+    unicode specific characters
+    Input: string
+    Output: string
+    '''
+    soup = BeautifulSoup(html_text, 'html')
+    c_text = soup.text
+    c_text = re.sub('(\xa0)|\n', ' ', c_text)
+    c_text = re.sub('\'', '', c_text)
+
+    return c_text
 
 
 if __name__ == '__main__':

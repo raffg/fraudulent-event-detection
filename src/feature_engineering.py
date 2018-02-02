@@ -40,6 +40,7 @@ def feature_engineering(df):
     df['num_tiers'] = df.ticket_types.apply(len)
 
     df['clean_desc'] = df.description.apply(clean_text)
+    print()
 
     return df
 

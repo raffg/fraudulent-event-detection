@@ -23,7 +23,7 @@ def run_model_random_forest(X_train, X_test, y_train, y_test):
     model = rf(X_train, X_test, y_train, y_test)
     print()
 
-    # lrandom_forest_save_pickle(lr_condensed)
+    # random_forest_save_pickle(model)
 
 
 def rf(X_train, X_test, y_train, y_test):

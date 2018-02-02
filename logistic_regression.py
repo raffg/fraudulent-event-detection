@@ -23,7 +23,7 @@ def run_model_logistic_regression(X_train, X_test, y_train, y_test):
     model = lr(X_train, X_test, y_train, y_test)
     print()
 
-    # logistic_regression_save_pickle(lr_condensed)
+    # logistic_regression_save_pickle(model)
 
 
 def lr(X_train, X_test, y_train, y_test):

@@ -13,6 +13,8 @@ from sklearn.preprocessing import StandardScaler
 def main():
     X_train, X_test, y_train, y_test, scaler = prepare_data()
     run_model_gradient_boosting(X_train, X_test, y_train, y_test)
+    with open('scaler.pkl', 'wb') as f:
+        pickle.dump(scaler, f, protocol=4)
 
 
 def run_model_gradient_boosting(X_train, X_test, y_train, y_test):

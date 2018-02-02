@@ -1,18 +1,12 @@
 import pandas as pd
 import numpy as np
+from src.logistic_regression_grid_search import prepare_data
 from src.ridge_grid_scan import ridge_grid_scan
 from logistic_regression import lr
 
 
 def main():
-    X_train = pd.read_pickle('pickle/train_all_std.pkl')
-    y_train = pd.read_pickle('pickle/y_train_all_std.pkl')
-
-    drop = ['created_at', 'id_str', 'in_reply_to_user_id_str', 'tweetokenize',
-            'text', 'pos', 'ner']
-
-    # Remove non-numeric features
-    X_train = X_train.drop(drop, axis=1)
+    X_train, y_train, scaler = prepare_data()
 
     # Run feature selection grid scan
     feature_list = ridge_grid_scan(X_train,

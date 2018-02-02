@@ -13,8 +13,8 @@ def main():
 
 
 def lr_grid_search(X, y):
-    parameters = {'penalty': ['l2'],
-                  'C': [1e-2, 1e-1, 1, 10, 100, 1000, 10000]}
+    parameters = {'penalty': ['l1', 'l2'],
+                  'C': [1e-2, 1e-1, 1, 10, 100]}
 
     lr = LogisticRegression()
     clf = GridSearchCV(lr, parameters, scoring='recall', cv=10, verbose=True)
@@ -105,7 +105,7 @@ def prepare_data():
     y_train = y
 
     scaler = StandardScaler()
-    X_train = scaler.fit_transform(X_train)
+    X_train = pd.DataFrame(scaler.fit_transform(X_train), columns=cols)
 
     return X_train, y_train, scaler
 

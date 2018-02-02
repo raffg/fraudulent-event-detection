@@ -1,23 +1,27 @@
 import pandas as pd
 import numpy as np
 from src.feature_engineering import feature_engineering
-from sklearn.linear_model import LogisticRegression
+from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import GridSearchCV
 from sklearn.preprocessing import StandardScaler
 
 
 def main():
     X_train, y_train, scaler = prepare_data()
-    result = lr_grid_search(np.array(X_train), np.array(y_train).ravel())
+    result = rf_grid_search(np.array(X_train), np.array(y_train).ravel())
     print(result.best_params_, result.best_score_)
 
 
-def lr_grid_search(X, y):
-    parameters = {'penalty': ['l2'],
-                  'C': [1e-2, 1e-1, 1, 10, 100]}
+def rf_grid_search(X, y):
+    parameters = {'n_estimators': [300],
+                  'max_features': ['auto', 'sqrt', 'log2'],
+                  'max_depth': [None, 3, 5, 10],
+                  'min_samples_split': [2, 3],
+                  'min_samples_leaf': [1, 2, 3]
+                  }
 
-    lr = LogisticRegression()
-    clf = GridSearchCV(lr, parameters, scoring='recall', cv=10, verbose=True)
+    rf = RandomForestClassifier()
+    clf = GridSearchCV(rf, parameters, scoring='recall', cv=10, verbose=True)
     clf.fit(X, y)
 
     return clf

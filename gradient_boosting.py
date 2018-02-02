@@ -2,7 +2,7 @@ import pandas as pd
 import numpy as np
 import pickle
 from src.preprocessing import featurize, prepare_data
-from sklearn.linear_model import LogisticRegression
+from sklearn.ensemble import GradientBoostingClassifier
 from sklearn.metrics import accuracy_score, precision_score, recall_score, \
                             f1_score
 from src.feature_engineering import feature_engineering
@@ -12,24 +12,30 @@ from sklearn.preprocessing import StandardScaler
 
 def main():
     X_train, X_test, y_train, y_test, scaler = prepare_data()
-    run_model_logistic_regression(X_train, X_test, y_train, y_test)
+    run_model_gradient_boosting(X_train, X_test, y_train, y_test)
 
 
-def run_model_logistic_regression(X_train, X_test, y_train, y_test):
+def run_model_gradient_boosting(X_train, X_test, y_train, y_test):
     y_train = np.array(y_train).ravel()
     y_test = np.array(y_test).ravel()
 
-    print('Running Logistic Regression')
-    model = lr(X_train, X_test, y_train, y_test)
+    print('Running Gradient Boosting')
+    model = gb(X_train, X_test, y_train, y_test)
     print()
 
     # logistic_regression_save_pickle(lr_condensed)
 
 
-def lr(X_train, X_test, y_train, y_test):
-    # Logistic Regression
+def gb(X_train, X_test, y_train, y_test):
+    # Gradient Boosting
 
-    model = LogisticRegression(C=10)
+    model = GradientBoostingClassifier(loss='deviance',
+                                       learning_rate=.5,
+                                       n_estimators=100,
+                                       max_depth=3,
+                                       min_samples_split=2,
+                                       min_samples_leaf=2,
+                                       max_features='auto')
     model.fit(X_train, y_train)
     predicted = model.predict(X_test)
     print('Accuracy: ', accuracy_score(y_test, predicted))
@@ -40,9 +46,9 @@ def lr(X_train, X_test, y_train, y_test):
     return model
 
 
-def logistic_regression_save_pickle(model):
+def gradient_boosting_save_pickle(model):
     # Save pickle file
-    output = open('pickle/lr_model.pkl', 'wb')
+    output = open('pickle/gb_model.pkl', 'wb')
     print('Pickle dump model')
     pickle.dump(model, output, protocol=4)
     output.close()

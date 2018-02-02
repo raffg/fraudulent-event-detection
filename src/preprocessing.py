@@ -1,33 +1,13 @@
 import pandas as pd
-import numpy as np
 from src.feature_engineering import feature_engineering
-from sklearn.linear_model import LogisticRegression
-from sklearn.model_selection import GridSearchCV
+from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 
 
-def main():
-    X_train, y_train, scaler = prepare_data()
-    result = lr_grid_search(np.array(X_train), np.array(y_train).ravel())
-    print(result.best_params_, result.best_score_)
-
-
-def lr_grid_search(X, y):
-    parameters = {'penalty': ['l2'],
-                  'C': [1e-2, 1e-1, 1, 10, 100]}
-
-    lr = LogisticRegression()
-    clf = GridSearchCV(lr, parameters, scoring='recall', cv=10, verbose=True)
-    clf.fit(X, y)
-
-    return clf
-
-
-def prepare_data():
+def featurize(df):
     '''
-    Load the data, perform feature engineering, standardize, train/test split
+    Takes in raw dataframe and turns it into X data with features
     '''
-    df = pd.read_json('data/data.json')
     df = feature_engineering(df)
 
     y = df['fraud']
@@ -100,14 +80,24 @@ def prepare_data():
             'max_price',
             'num_tiers']
 
-    X_train = df[cols]
-    y_train = y
+    X = df[cols]
+
+    return X, y
+
+
+def prepare_data():
+    '''
+    Load the data, perform feature engineering, standardize, train/test split
+    '''
+    df = pd.read_json('data/data.json')
+
+    X, y = featurize(df)
+    df = df.dropna(subset=['event_published'])
+
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2)
 
     scaler = StandardScaler()
-    X_train = pd.DataFrame(scaler.fit_transform(X_train), columns=cols)
+    X_train = scaler.fit_transform(X_train)
+    X_test = scaler.transform(X_test)
 
-    return X_train, y_train, scaler
-
-
-if __name__ == '__main__':
-    main()
+    return X_train, X_test, y_train, y_test, scaler

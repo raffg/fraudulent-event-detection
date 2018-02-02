@@ -5,8 +5,11 @@ Team:
 - [Kristie Sarkar](https://github.com/ks2282)
 - [Rohit Unni](https://github.com/rohitunni)
 
+## Overview
+The goal of this project is to build a web application that identifies fraudulent event listings.
+
 ## Feature Engineering
-We performed exploratory data analysis to determine which features to include in modeling.
+We performed exploratory data analysis on a historical data set, containing event information and indicators of fraudulent activity, to determine which features to include or modify for modeling.
 
 - Features related to ticket sales were excluded, as our model is for detecting fraud earlier in the process, before transactions are made.
 - Specific organizations highly associated with fraudulent events were blacklisted,
@@ -22,6 +25,10 @@ The optimal parameters, identified while optimizing for recall are:
 - Lambda parameter for regularization:  
 
 ## Model Results
+Our logistic regression, with 10-fold cross validation, performed with the following metrics on the training data:
+- Accuracy:
+- Precision:
+- Recall:
 
 ## About the App
 

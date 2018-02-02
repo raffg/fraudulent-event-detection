@@ -1,23 +1,35 @@
 import pandas as pd
 import numpy as np
 from src.feature_engineering import feature_engineering
-from sklearn.linear_model import LogisticRegression
+from sklearn.neighbors import KNeighborsClassifier
 from sklearn.model_selection import GridSearchCV
 from sklearn.preprocessing import StandardScaler
 
 
 def main():
     X_train, y_train, scaler = prepare_data()
-    result = lr_grid_search(np.array(X_train), np.array(y_train).ravel())
-    print(result.best_params_, result.best_score_)
+
+    feats = ['previous_payouts?', 'payout_type?', 'fraud_email_domain',
+             'user_age_90', 'channels', 'has_logo', 'name_length',
+             'body_length', 'fb_published', 'show_map', 'has_analytics',
+             'num_tiers', 'num_links', 'org_blacklist', 'event_created_hour',
+             'fraud_country', 'total_price', 'fraud_venue_country', 'listed',
+             'max_price', 'fraud_currency', 'event_end_hour',
+             'event_start_hour']
+
+    for n in range(1, len(feats)):
+        result = knn_grid_search(np.array(X_train[feats[:n]]),
+                                 np.array(y_train).ravel())
+        print(n, result.best_params_, result.best_score_)
 
 
-def lr_grid_search(X, y):
-    parameters = {'penalty': ['l2'],
-                  'C': [1e-2, 1e-1, 1, 10, 100]}
+def knn_grid_search(X, y):
+    parameters = {'n_neighbors': [2, 3, 4, 5, 6, 7, 8],
+                  'weights': ['uniform', 'distance']
+                  }
 
-    lr = LogisticRegression()
-    clf = GridSearchCV(lr, parameters, scoring='recall', cv=10, verbose=True)
+    knn = KNeighborsClassifier()
+    clf = GridSearchCV(knn, parameters, scoring='recall', cv=10, verbose=True)
     clf.fit(X, y)
 
     return clf

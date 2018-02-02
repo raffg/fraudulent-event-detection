@@ -20,10 +20,10 @@ def main():
     results['Majority Vote'] = 0
     results['Majority Vote'] = results.apply(majority, axis=1)
 
-    result = decision_tree_grid_search(results, y_train)
-    print(result.best_params_, result.best_score_)
+    # result = decision_tree_grid_search(results, y_train)
+    # print(result.best_params_, result.best_score_)
 
-    # test_results = ensemble_test_results(ensemble, X_test, y_test)
+    test_results = ensemble_test_results(ensemble, X_test, y_test)
 
     # ensemble_save_pickle(model)
 
@@ -69,9 +69,12 @@ def decision_tree(X, y):
 
     for train_index, test_index in kfold.split(X):
         model = DecisionTreeClassifier(criterion='gini',
-                                       max_depth=None,
-                                       min_weight_fraction_leaf=0.001,
-                                       splitter='best')
+                                       max_depth=4,
+                                       max_features='sqrt',
+                                       min_samples_leaf=3,
+                                       min_samples_split=2,
+                                       min_weight_fraction_leaf=0.0,
+                                       splitter='random')
         X_train, X_test = X[train_index], X[test_index]
         y_train, y_test = y[train_index], y[test_index]
         model.fit(X_train, y_train)

@@ -18,17 +18,20 @@ and a flag for whether an event's organization is blacklisted was added as a bin
 - Ticket pricing information was extracted from the 'ticket_types' field.
 
 ## Model Specifications
-Grid search was performed, with 10-fold cross validation, to identify the optimal hyperparameters for regularizing the logistic regression, optimizing for recall. We also tried optimizing for accuracy, F1, and ROC_AUC.
+Grid search was performed, with 10-fold cross validation, to assess various models and hyperparameters:
+- Logistic regression with regularization
+- Random forest
+- Gradient boosting
 
-The optimal parameters, identified while optimizing for recall are:
-- Type of regularization:
-- Lambda parameter for regularization:  
+The optimal model was gradient boosting with the following hyperparameters:
+-
 
 ## Model Results
 Our logistic regression, with 10-fold cross validation, performed with the following metrics on the training data:
-- Accuracy:
-- Precision:
-- Recall:
+- Accuracy: 0.979
+- Precision: 0.908
+- Recall: 0.855
+- F1: 0.881
 
 ## About the App
 

@@ -89,7 +89,7 @@ def prepare_data():
     '''
     Load the data, perform feature engineering, standardize, train/test split
     '''
-    df = pd.read_json('data/data.json')
+    df = pd.read_json('../dsi-fraud-detection-case-study/data/data.json')
 
     X, y = featurize(df)
     df = df.dropna(subset=['event_published'])

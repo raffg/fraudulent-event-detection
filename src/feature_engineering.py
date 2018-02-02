@@ -106,36 +106,97 @@ def org_blacklist(df):
 
 
 def short_dummify(df, columns):
-   '''
-   Takes a DataFrame and a list of columns and outputs a 1 if the value has
-   been associated with fraud and 0 otherwise
-   INPUT: DataFrame, list of strings
-   OUTPUT: DataFrame
-   '''
-   print('Dummifying columns')
-   for column in columns:
-       print('   converting column ' + column)
-       print(list(df[df['fraud']][column].unique()))
+    '''
+    Takes a DataFrame and a list of columns and outputs a 1 if the value has
+    been associated with fraud and 0 otherwise
+    INPUT: DataFrame, list of strings
+    OUTPUT: DataFrame
+    '''
+    print('Dummifying columns')
+    for column in columns:
+        print('   converting column ' + column)
 
-       col_dict = {'venue_country': ['US', '', 'GB', None, 'CA', 'AU', 'AR',
-                                     'PH', 'IT', 'MA', 'ID', 'NL', 'DE', 'VN',
-                                     'AE', 'FR', 'DK', 'KH', 'NA', 'KE', 'PK',
-                                     'SE', 'CM', 'MX', 'DZ', 'ZA', 'RU', 'TR',
-                                     'TH', 'CO', 'NG', 'OM', 'JE', 'CY',
-                                     'HR'],
-                   'country': ['US', '', 'GB', 'CA', 'VN', 'AU', 'MY', 'PK',
-                               'MA', 'AR', 'NZ', 'CH', 'PH', 'A1', 'CI', 'ID',
-                               'NL', 'DE', 'PS', 'PT', 'TR', 'NG', 'CZ', 'FR',
-                               'PR', 'KH', 'JM', 'NA', 'FI', 'BG', 'GH', 'QA',
-                               'SI', 'BE', 'IN', 'CM', 'RU', 'DZ', 'RO', 'IL',
-                               'CN', 'RS', 'DK', 'CO', 'JE', 'HR', 'ES'],
-                   ' currency': ['USD', 'GBP', 'CAD', 'AUD', 'EUR', 'MXN']
-                   }
+        col_dict = {'email_domain': ['gmail.com', 'hotmail.com', 'cox.net',
+                                     'hotmail.co.uk', 'yahoo.com', 'ymail.com',
+                                     'inbox.com', 'zumba-perth.com',
+                                     'Safe-mail.net', 'yopmail.com', 'aol.com',
+                                     'diversity-church.com', 'comcast.net',
+                                     'yahoo.co.uk', 'yahoo.ca',
+                                     '19sieunhan.com', 'mail.com',
+                                     '4asdkids.com', 'emgay.com', 'live.com',
+                                     'outlook.com', 'maroclancers.com',
+                                     'hotmail.fr', 'lidf.co.uk', 'gcase.org',
+                                     'checker.vn', 'The2Half.com',
+                                     'petlover.com', 'rocketmail.com',
+                                     'aol.co.uk', 'jcclain.com',
+                                     'yahoo.fr', 'live.fr', 'yahoo.com.vn',
+                                     'yahoo.de', 'qip.ru', 'rock.com',
+                                     'att.net', 'lmtexformula.com', 'chef.net',
+                                     'ovidcapita.com', 'instructor.net',
+                                     'quaychicago.com',
+                                     'thinktankconsultancy.com', '9and1.biz',
+                                     'GMAIL.COM', 'startupmaroc.com',
+                                     'msn.com', 'consultant.com', 'hotmail.de',
+                                     'ultimatewine.co.uk', 'yahoo.it',
+                                     'me.com', 'safe-mail.net', 'europe.com',
+                                     'ioccupied.net', 'gmx.com',
+                                     'investocorp.com', 'ashfordradtech.org',
+                                     'myself.com', 'inorbit.com', 'post.com',
+                                     'leisurelodgebaguio.com', 'cs.com',
+                                     'naworld-x.com', 'DionJordan.com',
+                                     'brew-master.com', 'ravemail.com',
+                                     'angelwish.org', 'hotelvenizbaguio.com',
+                                     'socialworker.net', 'discofan.com',
+                                     'greenrcs.com', 'outlook.fr', 'live.FR',
+                                     'googlemail.com', 'toke.com',
+                                     'eng.uk.com', 'outlook.de', 'mohmal.com',
+                                     'yahoo.co.id', 'visichathosting.net',
+                                     'catchatt.com', 'twcny.rr.com',
+                                     'frontier.com', 'live.co.uk', 'clerk.com',
+                                     'jobsfc.com', 'contractor.net',
+                                     'primehire.co.uk', 'myway.com',
+                                     'indglobal-consulting.com',
+                                     'lushsaturdays.co.uk',
+                                     'levyresourcesinc.com', 'in.com',
+                                     'techie.com', '31and7.com', 'izzane.net',
+                                     'vncall.net', 'dr.com',
+                                     'gosimplysocial.com', 'freya.pw',
+                                     '4u2nv-ent.com', 'accountant.com',
+                                     'innovateyours.com', 'noiphuongxa.com',
+                                     'anasconcept.com', 'indiabestplace.com',
+                                     'live.de', 'student.framingham.edu',
+                                     'hamptonmedi.com', 'hmshost.com',
+                                     'execs.com', 'keromail.com',
+                                     'photographer.net', 'yahoo.com.ar',
+                                     'usa.com', 'clothmode.com',
+                                     'cyberservices.com', 'kbzaverigroup.com',
+                                     'monkeyadvert.com',
+                                     'insuranceadjustersinc.com', '126.com',
+                                     'nbuux.com', 'qualityservice.com',
+                                     'medicalrepinsight.com',
+                                     'brew-meister.com', 'blader.com',
+                                     'hushmail.com', 'cdrenterprise.net',
+                                     'london.com', 'fridayzonmarz.co.uk',
+                                     'gawab.com', 'cannapro.com'],
+                    'venue_country': ['US', '', 'GB', None, 'CA', 'AU', 'AR',
+                                      'PH', 'IT', 'MA', 'ID', 'NL', 'DE', 'VN',
+                                      'AE', 'FR', 'DK', 'KH', 'NA', 'KE', 'PK',
+                                      'SE', 'CM', 'MX', 'DZ', 'ZA', 'RU', 'TR',
+                                      'TH', 'CO', 'NG', 'OM', 'JE', 'CY',
+                                      'HR'],
+                    'country': ['US', '', 'GB', 'CA', 'VN', 'AU', 'MY', 'PK',
+                                'MA', 'AR', 'NZ', 'CH', 'PH', 'A1', 'CI', 'ID',
+                                'NL', 'DE', 'PS', 'PT', 'TR', 'NG', 'CZ', 'FR',
+                                'PR', 'KH', 'JM', 'NA', 'FI', 'BG', 'GH', 'QA',
+                                'SI', 'BE', 'IN', 'CM', 'RU', 'DZ', 'RO', 'IL',
+                                'CN', 'RS', 'DK', 'CO', 'JE', 'HR', 'ES'],
+                    'currency': ['USD', 'GBP', 'CAD', 'AUD', 'EUR', 'MXN']
+                    }
 
-       cols = col_dict[column]
-       df['fraud_' + column] = df[column].apply(lambda x: 1 if x in cols
-                                                else 0)
-   return df
+        cols = col_dict[column]
+        df['fraud_' + column] = df[column].apply(lambda x: 1 if x in cols
+                                                 else 0)
+    return df
 
 
 def dummify_nan(df, columns):

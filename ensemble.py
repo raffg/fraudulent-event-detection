@@ -7,6 +7,7 @@ from gradient_boosting import gb
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.model_selection import GridSearchCV
 from sklearn.model_selection import KFold
+from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score, precision_score, recall_score, \
                             f1_score
 
@@ -14,26 +15,36 @@ from sklearn.metrics import accuracy_score, precision_score, recall_score, \
 def main():
     X_train, X_test, y_train, y_test, scaler = prepare_data()
     results = run_model_ensemble(X_train, X_test, y_train, y_test)
-    train = pd.DataFrame({'Logistic Regression': results[0],
-                          'Random Forest': results[1],
-                          'Gradient Boosting': results[2]})
+    X_train = pd.DataFrame({'Logistic Regression': results[0],
+                            'Random Forest': results[1],
+                            'Gradient Boosting': results[2]})
 
-    train['Majority Vote'] = 0
-    train['Majority Vote'] = train.apply(majority, axis=1)
+    y_train = y_train.reset_index(drop=True)
+    temp = pd.concat([X_train, y_train], axis=1)
+    X_train = temp[['Gradient Boosting',
+                    'Logistic Regression',
+                    'Random Forest']]
+    y_train = temp['fraud']
 
-    # result = decision_tree_grid_search(results, y_train)
+    X_train['Majority Vote'] = 0
+    X_train['Majority Vote'] = X_train.apply(majority, axis=1)
+
+    # result = decision_tree_grid_search(X_train, y_train)
     # print(result.best_params_, result.best_score_)
 
-    ensemble = decision_tree(train, y_train)
+    ensemble = decision_tree(X_train, y_train)
+    print('ensemble trained')
 
-    test = pd.DataFrame({'Logistic Regression': results[3].predict(X_test),
-                         'Random Forest': results[4].predict(X_test),
-                         'Gradient Boosting': results[5].predict(X_test)})
+    # test = pd.DataFrame({'Logistic Regression': X_test,
+    #                      'Random Forest': X_test,
+    #                      'Gradient Boosting': X_test})
+    # print('test complete')
+    #
+    # test['Majority Vote'] = 0
+    # test['Majority Vote'] = test.apply(majority, axis=1)
+    # print('test majority complete')
 
-    test['Majority Vote'] = 0
-    test['Majority Vote'] = test.apply(majority, axis=1)
-
-    test_results = ensemble_test_results(ensemble, test, y_test)
+    test_results = ensemble_test_results(ensemble, X_test, y_test)
 
     # ensemble_save_pickle(model)
 
@@ -88,8 +99,6 @@ def decision_tree(X, y):
                                        splitter='random')
         X_train, X_test = X[train_index], X[test_index]
         y_train, y_test = y[train_index], y[test_index]
-        print(X_train)
-        print(y_train)
         model.fit(X_train, y_train)
         y_predict = model.predict(X_test)
         y_true = y_test

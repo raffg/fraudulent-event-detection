@@ -17,6 +17,12 @@ and a flag for whether an event's organization is blacklisted was added as a bin
 - The hour of day was extracted from datetimes to use as a feature.
 - Ticket pricing information was extracted from the 'ticket_types' field.
 
+The most influential features to our model were
+- Whether or not there has been a previous payout to that user
+- Whether or not the payout type is provided
+- The domain of the email address
+- The age of the user
+
 ## Model Specifications
 Grid search was performed, with 10-fold cross validation, to assess various models and hyperparameters:
 - Logistic regression with regularization

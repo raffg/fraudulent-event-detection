@@ -33,7 +33,6 @@ def prepare_data():
     '''
     df = pd.read_json('data/data.json')
     df = feature_engineering(df)
-    df = df.dropna(subset=['event_published'])
 
     y = df['fraud']
     X = df.drop('fraud', axis=1)

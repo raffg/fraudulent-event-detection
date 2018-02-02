@@ -22,7 +22,7 @@ def gb_grid_search(X, y):
                   'max_features': ['auto', 'sqrt', 'log2']}
 
     gb = GradientBoostingClassifier()
-    clf = GridSearchCV(gb, parameters, scoring='recall', cv=10, verbose=True)
+    clf = GridSearchCV(gb, parameters, scoring='recall', cv=5, verbose=True)
     clf.fit(X, y)
 
     return clf
@@ -34,7 +34,6 @@ def prepare_data():
     '''
     df = pd.read_json('data/data.json')
     df = feature_engineering(df)
-    df = df.dropna(subset=['event_published'])
 
     y = df['fraud']
     X = df.drop('fraud', axis=1)

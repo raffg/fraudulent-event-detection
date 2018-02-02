@@ -109,13 +109,14 @@ def short_dummify(df, columns):
 def dummify_nan(df, columns):
     '''
     Takes a DataFrame and a list of columns and creates a new column with 1 in
-    rows where the original column was NaN, otherwise 0
+    rows where the original column was NaN, otherwise 0, and drops the column
     INPUT: DataFrame, list
     OUTPUT: DataFrame
     '''
     for column in columns:
         df[column + '_dummy'] = df[column].apply(lambda x: 1 if
                                                  np.isnan(x) else 0)
+        df = df.drop(column, axis=1)
     return df
 
 

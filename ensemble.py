@@ -148,7 +148,7 @@ def ensemble_test_results(model, X_test, y_test):
 
 def ensemble_save_pickle(model):
     # Save pickle file
-    output = open('pickle/ensemble_model.pkl', 'wb')
+    output = open('ensemble_model.pkl', 'wb')
     print('Pickle dump model')
     pickle.dump(model, output, protocol=4)
     output.close()

@@ -42,7 +42,7 @@ def lr(X_train, X_test, y_train, y_test):
 
 def logistic_regression_save_pickle(model):
     # Save pickle file
-    output = open('pickle/lr_model.pkl', 'wb')
+    output = open('lr_model.pkl', 'wb')
     print('Pickle dump model')
     pickle.dump(model, output, protocol=4)
     output.close()

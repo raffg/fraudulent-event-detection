@@ -23,7 +23,7 @@ def run_model_gradient_boosting(X_train, X_test, y_train, y_test):
     model = gb(X_train, X_test, y_train, y_test)
     print()
 
-    # gradient_boosting_save_pickle(model)
+    gradient_boosting_save_pickle(model)
 
 
 def gb(X_train, X_test, y_train, y_test):
@@ -48,7 +48,7 @@ def gb(X_train, X_test, y_train, y_test):
 
 def gradient_boosting_save_pickle(model):
     # Save pickle file
-    output = open('pickle/gb_model.pkl', 'wb')
+    output = open('gb_model.pkl', 'wb')
     print('Pickle dump model')
     pickle.dump(model, output, protocol=4)
     output.close()

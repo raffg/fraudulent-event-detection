@@ -47,7 +47,7 @@ def rf(X_train, X_test, y_train, y_test):
 
 def random_forest_save_pickle(model):
     # Save pickle file
-    output = open('pickle/rf_model.pkl', 'wb')
+    output = open('rf_model.pkl', 'wb')
     print('Pickle dump model')
     pickle.dump(model, output, protocol=4)
     output.close()

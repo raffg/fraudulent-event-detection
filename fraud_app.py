@@ -19,7 +19,9 @@ def get_model(path):
 def submission_page():
     return '''
         <form action="/score" method='POST' >
-            <input type="json" name="user_input" />
+            <textarea type="json" name="user_input" rows="25" cols="80"
+             style="color: white; background: magenta;
+                    font: bold 16px monospace"/></textarea>
             <input type="submit" />
         </form>
         '''

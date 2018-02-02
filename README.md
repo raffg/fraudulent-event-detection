@@ -22,16 +22,26 @@ Grid search was performed, with 10-fold cross validation, to assess various mode
 - Logistic regression with regularization
 - Random forest
 - Gradient boosting
+- K nearest neighbors
 
 The optimal model was gradient boosting with the following hyperparameters:
--
+- loss='deviance'
+- learning_rate=.5
+- n_estimators=100,
+- max_depth=3,
+- min_samples_split=2,
+- min_samples_leaf=2,
+- max_features='auto'
 
 ## Model Results
-Our logistic regression, with 10-fold cross validation, performed with the following metrics on the training data:
-- Accuracy: 0.979
-- Precision: 0.908
-- Recall: 0.855
-- F1: 0.881
+We separated our data in train and test sets, and then trained each model while optimizing the hyperparameters for maximum recall. After testing on an unseen test set, our models produced the following results:
+
+|   |Gradient Boosting|Random Forest|Logistic Regression|KNN|
+|---:|:--------------:|:-----------:|:-----------------:|:--:|
+|Accuracy|98%|98%|97%|98%|
+|Precision|91%|95%|92%|88%|
+|Recall|85%|83%|78%|84%|
+|F1 score|88%|89%|84%|86%|
 
 ## About the App
 

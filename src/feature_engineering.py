@@ -9,6 +9,7 @@ def main():
 
 
 def feature_engineering(df):
+    print('Performing feature engineering')
     df['fraud'] = df['acct_type'].str.contains('fraudster')
 
     df = datetime(df, ['approx_payout_date', 'event_created', 'event_end',
@@ -31,8 +32,11 @@ def feature_engineering(df):
                             'currency'])
 
     df = dummify_nan(df, ['event_published'])
+    print('Calculating total ticket price')
     df['total_price'] = df.ticket_types.apply(get_total_price)
+    print('Calculating maximum ticket price')
     df['max_price'] = df.ticket_types.apply(get_max_price)
+    print('Calculating the number of ticket tiers')
     df['num_tiers'] = df.ticket_types.apply(len)
 
     df['clean_desc'] = df.description.apply(clean_text)
@@ -47,7 +51,9 @@ def datetime(df, columns):
     INPUT: DataFrame, list of strings
     OUTPUT: DataFrame
     '''
+    print('Converting datetime')
     for column in columns:
+        print('   convering column ' + column)
         df[column + '_dt'] = pd.to_datetime(df[column], unit='s')
     return df
 
@@ -59,7 +65,9 @@ def hour(df, columns):
     INPUT: DataFrame, list of strings
     OUTPUT: DataFrame
     '''
+    print('Converting hour')
     for column in columns:
+        print('   convering column ' + column)
         df[column[:-3] + '_hour'] = df[column].dt.hour
     return df
 
@@ -71,7 +79,9 @@ def identify_empties(df, columns):
     INPUT: DataFrame, list of strings
     OUTPUT: DataFrame
     '''
+    print('Identifying NaN values')
     for column in columns:
+        print('   convering column ' + column)
         df[column + '?'] = df[column].apply(lambda x: 1 if len(x) > 0 else 0)
     return df
 
@@ -83,6 +93,7 @@ def org_blacklist(df):
     INPUT: DataFrame
     OUTPUT: DataFrame
     '''
+    print('Applying organization blacklist')
     blacklist = ['The London Connection',
                  "Party Starz Ent & Diverse Int'l Group",
                  'CP Enterprises',
@@ -99,7 +110,9 @@ def short_dummify(df, columns):
     INPUT: DataFrame, list of strings
     OUTPUT: DataFrame
     '''
+    print('Dummifying columns')
     for column in columns:
+        print('   convering column ' + column)
         cols = list(df[df['fraud']][column].unique())
         df['fraud_' + column] = df[column].apply(lambda x: 1 if x in cols
                                                  else 0)
@@ -113,7 +126,9 @@ def dummify_nan(df, columns):
     INPUT: DataFrame, list
     OUTPUT: DataFrame
     '''
+    print('Dummifying NaNs')
     for column in columns:
+        print('   convering column ' + column)
         df[column + '_dummy'] = df[column].apply(lambda x: 1 if
                                                  np.isnan(x) else 0)
         df = df.drop(column, axis=1)

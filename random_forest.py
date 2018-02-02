@@ -1,46 +1,23 @@
 import pandas as pd
 import numpy as np
+import pickle
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.metrics import accuracy_score, precision_score, recall_score, \
+                            f1_score
 from src.feature_engineering import feature_engineering
-from sklearn.ensemble import GradientBoostingClassifier
-from sklearn.model_selection import GridSearchCV
+from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 
 
 def main():
-    X_train, y_train, scaler = prepare_data()
-    result = gb_grid_search(np.array(X_train), np.array(y_train).ravel())
-    print(result.best_params_, result.best_score_)
+    X_train, X_test, y_train, y_test, scaler = prepare_data()
+    run_model_random_forest(X_train, X_test, y_train, y_test)
 
 
-def gb_grid_search(X, y):
-    parameters = {'loss': ['deviance', 'exponential'],
-                  'learning_rate': [.1, .5, 1, 1.5, 10],
-                  'n_estimators': [10, 50, 100, 150, 200],
-                  'max_depth': [2, 3, 4],
-                  'min_samples_split': [2, 3],
-                  'min_samples_leaf': [1, 2],
-                  'max_features': ['auto', 'sqrt', 'log2']}
-
-    parameters2 = {'loss': ['deviance'],
-                   'learning_rate': [.5],
-                   'n_estimators': [100],
-                   'max_depth': [3],
-                   'min_samples_split': [2],
-                   'min_samples_leaf': [2],
-                   'max_features': ['auto']}
-
-    gb = GradientBoostingClassifier()
-    clf = GridSearchCV(gb, parameters2, scoring='recall', cv=5, verbose=True)
-    clf.fit(X, y)
-
-    return clf
-
-
-def prepare_data():
+def featurize(df):
     '''
-    Load the data, perform feature engineering, standardize, train/test split
+    Takes in raw dataframe and turns it into X data with features
     '''
-    df = pd.read_json('data/data.json')
     df = feature_engineering(df)
 
     y = df['fraud']
@@ -113,13 +90,67 @@ def prepare_data():
             'max_price',
             'num_tiers']
 
-    X_train = df[cols]
-    y_train = y
+    X = df[cols]
+
+    return X, y
+
+
+def prepare_data():
+    '''
+    Load the data, perform feature engineering, standardize, train/test split
+    '''
+    df = pd.read_json('data/data.json')
+
+    X, y = featurize(df)
+    df = df.dropna(subset=['event_published'])
+
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2)
 
     scaler = StandardScaler()
-    X_train = pd.DataFrame(scaler.fit_transform(X_train), columns=cols)
+    X_train = scaler.fit_transform(X_train)
+    X_test = scaler.transform(X_test)
 
-    return X_train, y_train, scaler
+    return X_train, X_test, y_train, y_test, scaler
+
+
+def run_model_random_forest(X_train, X_test, y_train, y_test):
+    y_train = np.array(y_train).ravel()
+    y_test = np.array(y_test).ravel()
+
+    print('Running Random Forest')
+    model = rf(X_train, X_test, y_train, y_test)
+    print()
+
+    # lrandom_forest_save_pickle(lr_condensed)
+
+
+def rf(X_train, X_test, y_train, y_test):
+    # Random Forest
+
+    model = RandomForestClassifier(max_depth=None,
+                                   max_features='sqrt',
+                                   min_samples_leaf=1,
+                                   min_samples_split=2,
+                                   n_estimators=1000,
+                                   n_jobs=-1)
+    model.fit(X_train, y_train)
+    predicted = model.predict(X_test)
+    print('Accuracy: ', accuracy_score(y_test, predicted))
+    print('Precision: ', precision_score(y_test, predicted))
+    print('Recall: ', recall_score(y_test, predicted))
+    print('F1 score: ', f1_score(y_test, predicted))
+
+    return model
+
+
+def random_forest_save_pickle(model):
+    # Save pickle file
+    output = open('pickle/rf_model.pkl', 'wb')
+    print('Pickle dump model')
+    pickle.dump(model, output, protocol=4)
+    output.close()
+
+    return
 
 
 if __name__ == '__main__':

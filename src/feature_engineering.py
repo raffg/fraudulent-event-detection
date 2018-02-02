@@ -106,19 +106,36 @@ def org_blacklist(df):
 
 
 def short_dummify(df, columns):
-    '''
-    Takes a DataFrame and a list of columns and outputs a 1 if the value has
-    been associated with fraud and 0 otherwise
-    INPUT: DataFrame, list of strings
-    OUTPUT: DataFrame
-    '''
-    print('Dummifying columns')
-    for column in columns:
-        print('   converting column ' + column)
-        cols = list(df[df['fraud']][column].unique())
-        df['fraud_' + column] = df[column].apply(lambda x: 1 if x in cols
-                                                 else 0)
-    return df
+   '''
+   Takes a DataFrame and a list of columns and outputs a 1 if the value has
+   been associated with fraud and 0 otherwise
+   INPUT: DataFrame, list of strings
+   OUTPUT: DataFrame
+   '''
+   print('Dummifying columns')
+   for column in columns:
+       print('   converting column ' + column)
+       print(list(df[df['fraud']][column].unique()))
+
+       col_dict = {'venue_country': ['US', '', 'GB', None, 'CA', 'AU', 'AR',
+                                     'PH', 'IT', 'MA', 'ID', 'NL', 'DE', 'VN',
+                                     'AE', 'FR', 'DK', 'KH', 'NA', 'KE', 'PK',
+                                     'SE', 'CM', 'MX', 'DZ', 'ZA', 'RU', 'TR',
+                                     'TH', 'CO', 'NG', 'OM', 'JE', 'CY',
+                                     'HR'],
+                   'country': ['US', '', 'GB', 'CA', 'VN', 'AU', 'MY', 'PK',
+                               'MA', 'AR', 'NZ', 'CH', 'PH', 'A1', 'CI', 'ID',
+                               'NL', 'DE', 'PS', 'PT', 'TR', 'NG', 'CZ', 'FR',
+                               'PR', 'KH', 'JM', 'NA', 'FI', 'BG', 'GH', 'QA',
+                               'SI', 'BE', 'IN', 'CM', 'RU', 'DZ', 'RO', 'IL',
+                               'CN', 'RS', 'DK', 'CO', 'JE', 'HR', 'ES'],
+                   ' currency': ['USD', 'GBP', 'CAD', 'AUD', 'EUR', 'MXN']
+                   }
+
+       cols = col_dict[column]
+       df['fraud_' + column] = df[column].apply(lambda x: 1 if x in cols
+                                                else 0)
+   return df
 
 
 def dummify_nan(df, columns):

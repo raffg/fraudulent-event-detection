@@ -89,10 +89,9 @@ def prepare_data():
     '''
     Load the data, perform feature engineering, standardize, train/test split
     '''
-    df = pd.read_json('../dsi-fraud-detection-case-study/data/data.json')
+    df = pd.read_json('data/data.json')
 
     X, y = featurize(df)
-    df = df.dropna(subset=['event_published'])
 
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2,
                                                         random_state=1)

@@ -36,12 +36,12 @@ The optimal model was gradient boosting with the following hyperparameters:
 ## Model Results
 We separated our data in train and test sets, and then trained each model while optimizing the hyperparameters for maximum recall. After testing on an unseen test set, our models produced the following results:
 
-|   |Gradient Boosting|Random Forest|Logistic Regression|KNN|
-|---:|:--------------:|:-----------:|:-----------------:|:--:|
-|Accuracy|98%|98%|97%|98%|
-|Precision|91%|95%|92%|88%|
-|Recall|85%|83%|78%|84%|
-|F1 score|88%|89%|84%|86%|
+|   |Gradient Boosting|Random Forest|Logistic Regression|KNN|Ensemble|
+|---:|:--------------:|:-----------:|:-----------------:|:--:|:-----:|
+|Accuracy|98%|98%|97%|98%|98%|
+|Precision|91%|95%|92%|88%|95%|
+|Recall|85%|83%|78%|84%|83%|
+|F1 score|88%|89%|84%|86%|89%|
 
 ## About the App
 

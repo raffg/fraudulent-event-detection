@@ -4,6 +4,7 @@ from src.preprocessing import featurize, prepare_data
 from logistic_regression import lr
 from random_forest import rf
 from gradient_boosting import gb
+from knn import knn
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.model_selection import GridSearchCV
 from sklearn.model_selection import KFold
@@ -17,36 +18,30 @@ def main():
     results = run_model_ensemble(X_train, X_test, y_train, y_test)
     X_train = pd.DataFrame({'Logistic Regression': results[0],
                             'Random Forest': results[1],
-                            'Gradient Boosting': results[2]})
+                            'Gradient Boosting': results[2],
+                            'KNN': results[3]})
 
+    X_train = X_train.reset_index(drop=True)
     y_train = y_train.reset_index(drop=True)
-    temp = pd.concat([X_train, y_train], axis=1)
-    X_train = temp[['Gradient Boosting',
-                    'Logistic Regression',
-                    'Random Forest']]
-    y_train = temp['fraud']
+
+    X_test = pd.DataFrame({'Logistic Regression': results[4].predict(X_test),
+                           'Random Forest': results[5].predict(X_test),
+                           'Gradient Boosting': results[6].predict(X_test),
+                           'KNN': results[7].predict(X_test)})
 
     X_train['Majority Vote'] = 0
     X_train['Majority Vote'] = X_train.apply(majority, axis=1)
 
+    X_test['Majority Vote'] = 0
+    X_test['Majority Vote'] = X_test.apply(majority, axis=1)
+
     # result = decision_tree_grid_search(X_train, y_train)
     # print(result.best_params_, result.best_score_)
 
-    ensemble = decision_tree(X_train, y_train)
+    ensemble = decision_tree(X_train, X_test, y_train, y_test)
     print('ensemble trained')
 
-    # test = pd.DataFrame({'Logistic Regression': X_test,
-    #                      'Random Forest': X_test,
-    #                      'Gradient Boosting': X_test})
-    # print('test complete')
-    #
-    # test['Majority Vote'] = 0
-    # test['Majority Vote'] = test.apply(majority, axis=1)
-    # print('test majority complete')
-
-    test_results = ensemble_test_results(ensemble, X_test, y_test)
-
-    # ensemble_save_pickle(model)
+    # ensemble_save_pickle(ensemble)
 
 
 def run_model_ensemble(X_train, X_test, y_train, y_test):
@@ -68,49 +63,41 @@ def run_model_ensemble(X_train, X_test, y_train, y_test):
     results_gb = model_gb.predict(X_train)
     print()
 
-    return results_lr, results_rf, results_gb, model_lr, model_rf, model_gb
+    print('Training K Nearest Neighbors')
+    model_knn = knn(X_train, X_test, y_train, y_test)
+    results_knn = model_knn.predict(X_train)
+    print()
+
+    return (results_lr, results_rf, results_gb, results_knn,
+            model_lr, model_rf, model_gb, model_knn)
 
 
 def majority(row):
     val = 1 if (row['Logistic Regression'] +
                 row['Random Forest'] +
-                row['Gradient Boosting']) > 1 else 0
+                row['Gradient Boosting'] +
+                row['KNN']) >= 2 else 0
     return val
 
 
-def decision_tree(X, y):
+def decision_tree(X_train, X_test, y_train, y_test):
     # Basic decision tree for ensemble
     print('Training Decision Tree')
 
-    kfold = KFold(n_splits=10)
-
-    accuracies = []
-    precisions = []
-    recalls = []
-    f1_scores = []
-
-    for train_index, test_index in kfold.split(X):
-        model = DecisionTreeClassifier(criterion='gini',
-                                       max_depth=4,
-                                       max_features='sqrt',
-                                       min_samples_leaf=3,
-                                       min_samples_split=2,
-                                       min_weight_fraction_leaf=0.0,
-                                       splitter='random')
-        X_train, X_test = X[train_index], X[test_index]
-        y_train, y_test = y[train_index], y[test_index]
-        model.fit(X_train, y_train)
-        y_predict = model.predict(X_test)
-        y_true = y_test
-        accuracies.append(accuracy_score(y_true, y_predict))
-        precisions.append(precision_score(y_true, y_predict))
-        recalls.append(recall_score(y_true, y_predict))
-        f1_scores.append(f1_score(y_true, y_predict))
-
-    accuracy = np.average(accuracies)
-    precision = np.average(precisions)
-    recall = np.average(recalls)
-    f1 = np.average(f1_scores)
+    model = DecisionTreeClassifier(criterion='gini',
+                                   max_depth=None,
+                                   max_features='sqrt',
+                                   min_samples_leaf=1,
+                                   min_samples_split=2,
+                                   min_weight_fraction_leaf=0.001,
+                                   splitter='best')
+    model.fit(X_train, y_train)
+    y_predict = model.predict(X_test)
+    y_true = y_test
+    accuracy = accuracy_score(y_true, y_predict)
+    precision = precision_score(y_true, y_predict)
+    recall = recall_score(y_true, y_predict)
+    f1 = f1_score(y_true, y_predict)
 
     print('Accuracy: ', accuracy)
     print('Precision: ', precision)
@@ -130,20 +117,10 @@ def decision_tree_grid_search(X, y):
                   'max_features': [None, 'sqrt', 'log2']}
 
     dt = DecisionTreeClassifier()
-    clf = GridSearchCV(dt, parameters, cv=10, verbose=True)
+    clf = GridSearchCV(dt, parameters, scoring='recall', cv=10, verbose=True)
     clf.fit(X, y)
 
     return clf
-
-
-def ensemble_test_results(model, X_test, y_test):
-    y_predict = model.predict(X_test)
-
-    print()
-    print('Accuracy: ', accuracy_score(y_test, y_predict))
-    print('Precision: ', precision_score(y_test, y_predict))
-    print('Recall: ', recall_score(y_test, y_predict))
-    print('F1 score: ', f1_score(y_test, y_predict))
 
 
 def ensemble_save_pickle(model):

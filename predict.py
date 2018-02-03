@@ -17,7 +17,7 @@ def main(model, data):
 
     # pass data through same featurizing that training data went through
     df = pd.read_json(data)
-    data_featurized = featurize(df, True)[0]
+    data_featurized = featurize(df, True)
 
     with open('scaler.pkl', 'rb') as f:
         scaler = pickle.load(f)
@@ -27,9 +27,9 @@ def main(model, data):
     # makes prediction from model
     for row in data_scaled:
 
-        prediction = model.predict_proba(row.reshape(1,-1))
+        prediction = model.predict_proba(row.reshape(1,-1))[0][0]
 
-        return "Percent chance of fraud: {}".format(prediction * 100)
+        return "Percent chance of fraud: {}%".format(round(prediction * 100),3)
 
 
 

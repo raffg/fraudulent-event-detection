@@ -33,12 +33,17 @@ def feature_engineering(df, predict=False):
                             'currency'])
 
     df = dummify_nan(df, ['event_published'])
-    print('Calculating total ticket price')
-    df['total_price'] = df.ticket_types.apply(get_total_price)
-    print('Calculating maximum ticket price')
-    df['max_price'] = df.ticket_types.apply(get_max_price)
-    print('Calculating the number of ticket tiers')
-    df['num_tiers'] = df.ticket_types.apply(len)
+    try:
+        print('Calculating total ticket price')
+        df['total_price'] = df.ticket_types.apply(get_total_price)
+        print('Calculating maximum ticket price')
+        df['max_price'] = df.ticket_types.apply(get_max_price)
+        print('Calculating the number of ticket tiers')
+        df['num_tiers'] = df.ticket_types.apply(len)
+    except:
+        df['total_price'] = 0
+        df['max_price'] = 0
+        df['num_tiers'] = 1
 
     df['clean_desc'] = df.description.apply(clean_text)
     print()
